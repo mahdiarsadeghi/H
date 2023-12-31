@@ -1,7 +1,7 @@
-# Theme Name
+# minimal blog
 
-## Features
+## posts 
 
-## Installation
+## config
 
-## Configuration
+make sure to update github actions workflow when using hugo
