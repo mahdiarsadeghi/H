@@ -1,10 +1,10 @@
-+++ title = 'Rational' date = 2023-12-31T13:27:53-08:00 +++
++++
+title = 'Rational'
+date = 2023-12-31T13:27:53-08:00
++++
 
 ![](2023-12-28T03:21:05Z/3063950e3a63e7bd007d8e8a9875c944a47a48d4.png)
 
-
-
-# Rational Hallucination
 
 ## First words
 
