@@ -19,12 +19,44 @@ Renders a menu for the given menu ID.
 {{- end }}
 
 {{- define "partials/inline/menu/walk.html" }}
-  {{- $page := .page }}
+    {{- $page := .page }}
   {{- range .menuEntries }}
-    {{- $attrs := dict "href" .URL }}
+    {{- /* Ensure menu hrefs are language-aware and map known menu names to canonical paths */ -}}
+    {{- $origName := .Name -}}
+    {{- /* Prefer a page reference when present (menu entry may point to a Page via pageRef) */ -}}
+    {{- $href := "/" -}}
+    {{- if .Page }}
+      {{- /* If the menu entry points to a page, prefer that page's translation for the current language */ -}}
+      {{- $entry := .Page -}}
+      {{- $currLang := $page.Site.Language.Lang -}}
+      {{- if eq $entry.Lang $currLang }}
+        {{- $href = $entry.RelPermalink -}}
+      {{- else }}
+        {{- $matches := where $entry.Translations "Lang" $currLang -}}
+        {{- if gt (len $matches) 0 }}
+          {{- $trans := index $matches 0 -}}
+          {{- $href = $trans.RelPermalink -}}
+        {{- else }}
+          {{- /* fallback: use a language-aware path based on the entry's section */ -}}
+          {{- $href = (printf "/%s/" $currLang) | relURL -}}
+        {{- end }}
+      {{- end }}
+    {{- else if ne .URL "" }}
+      {{- $href = (.URL | relLangURL) -}}
+    {{- else }}
+      {{- /* map common menu names to canonical paths */ -}}
+      {{- if eq $origName "Home" }}
+        {{- $href = "/" | relLangURL -}}
+      {{- else if eq $origName "Posts" }}
+        {{- $href = "/posts/" | relLangURL -}}
+      {{- else if eq $origName "Tags" }}
+        {{- $href = "/tags/" | relLangURL -}}
+      {{- end }}
+    {{- end }}
+    {{- $attrs := dict "href" $href -}}
     {{- if $page.IsMenuCurrent .Menu . }}
       {{- $attrs = merge $attrs (dict "class" "active" "aria-current" "page") }}
-    {{- else if $page.HasMenuCurrent .Menu .}}
+    {{- else if $page.HasMenuCurrent .Menu . }}
       {{- $attrs = merge $attrs (dict "class" "ancestor" "aria-current" "true") }}
     {{- end }}
     {{- $name := .Name }}
@@ -40,7 +72,28 @@ Renders a menu for the given menu ID.
             {{- printf " %s=%q" $k $v | safeHTMLAttr }}
           {{- end }}
         {{- end -}}
-      >{{ $name }}</a>
+      >
+        {{- /* Localize common menu names for supported languages */ -}}
+        {{- $lang := $page.Site.Language.Lang -}}
+        {{- if eq $lang "fa" -}}
+          {{- if eq $origName "Home" -}}خانه
+          {{- else if eq $origName "Posts" -}}نوشته‌ها
+          {{- else if eq $origName "Tags" -}}برچسب‌ها
+          {{- else -}}{{ $name }}{{- end -}}
+        {{- else if eq $lang "fr" -}}
+          {{- if eq $origName "Home" -}}Accueil
+          {{- else if eq $origName "Posts" -}}Articles
+          {{- else if eq $origName "Tags" -}}Étiquettes
+          {{- else -}}{{ $name }}{{- end -}}
+        {{- else if eq $lang "ja" -}}
+          {{- if eq $origName "Home" -}}ホーム
+          {{- else if eq $origName "Posts" -}}投稿
+          {{- else if eq $origName "Tags" -}}タグ
+          {{- else -}}{{ $name }}{{- end -}}
+        {{- else -}}
+          {{ $name }}
+        {{- end -}}
+      </a>
       {{- with .Children }}
         <ul>
           {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }}

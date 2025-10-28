@@ -1,1 +1,68 @@
-<p>&#169; 2023 Mahdiar Sadeghi </p>
+{{- $lang := .Site.Language.Lang -}}
+{{- if eq $lang "fa" -}}
+<p class="fa-copy">© ۲۰۲۳ - ۲۰۲۵ توسط مهدیار</p>
+{{- else if eq $lang "fr" -}}
+<p>© 2023 - 2025 par mahdiar</p>
+{{- else if eq $lang "ja" -}}
+<p>© 2023 - 2025 著 mahdiar</p>
+{{- else -}}
+<p>&#169; 2023 - 2025 by mahdiar </p>
+{{- end -}}
+
+<!-- Footer controls: theme toggle and language switcher (bottom-right floating) -->
+<div class="footer-controls" aria-hidden="false">
+	<!-- Circular split-toggle track: left dark, right light. JS toggles aria-pressed. -->
+	<button id="theme-toggle" class="theme-toggle" aria-pressed="false" aria-label="Toggle dark mode" title="Toggle dark mode">
+		<span class="switch-track" aria-hidden="true">
+			<span class="switch-knob" aria-hidden="true"></span>
+		</span>
+	</button>
+
+		<div class="lang-list" aria-label="Language switcher">
+			<!-- language selector removed (global header switcher in use) -->
+		</div>
+</div>
+
+<!-- Inline quick-init script to ensure theme toggle works even if external JS isn't loaded yet -->
+<script>
+	(function () {
+		function applyTheme(theme) {
+			document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+			var btn = document.getElementById('theme-toggle');
+			if (btn) btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+		}
+		try {
+			var stored = localStorage.getItem('theme');
+			var initial = stored || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+			applyTheme(initial);
+			document.addEventListener('click', function (e) {
+				var t = e.target.closest && e.target.closest('#theme-toggle');
+				if (t) {
+					var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+					var next = current === 'dark' ? 'light' : 'dark';
+					localStorage.setItem('theme', next);
+					applyTheme(next);
+				}
+			});
+		} catch (err) { console.warn('theme init failed', err); }
+	})();
+</script>
+
+<script>
+	// language selector: navigate to selected language home
+	(function () {
+		var sel = document.getElementById('lang-select');
+		if (!sel) return;
+		sel.addEventListener('change', function () {
+			var v = this.value;
+			if (v) location.href = v;
+		});
+	})();
+</script>
+
+{{- if eq .Site.Language.Lang "fa" -}}
+<style>
+  .fa-note { text-align: center; direction: rtl; font-weight: 600; }
+  .fa-header-note { text-align: center; direction: rtl; margin: 0.5rem 0; }
+</style>
+{{- end -}}

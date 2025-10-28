@@ -2,3 +2,34 @@ baseURL = 'https://mahdiarsadeghi.github.io/H/'
 languageCode = 'en-us'
 title = 'Hallucinations'
 theme = 'blog'
+
+# Multilingual setup: English (default) and Farsi (fa)
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = true
+
+[languages]
+	[languages.en]
+		languageName = "English"
+		languageCode = "en"
+		weight = 1
+		# keep existing content in content/ for the default language
+		contentDir = "content"
+
+	[languages.fa]
+		languageName = "فارسی"
+		languageCode = "fa"
+		weight = 2
+		contentDir = "content/fa"
+		languageDirection = "rtl"
+
+	[languages.fr]
+		languageName = "Français"
+		languageCode = "fr"
+		weight = 3
+		contentDir = "content/fr"
+
+	[languages.ja]
+		languageName = "日本語"
+		languageCode = "ja"
+		weight = 4
+		contentDir = "content/ja"

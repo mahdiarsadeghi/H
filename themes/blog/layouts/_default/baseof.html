@@ -7,6 +7,8 @@
   <header>
     {{ partial "header.html" . }}
   </header>
+  {{- /* Global language switcher shown on every page */ -}}
+  {{ partial "lang-switch.html" . }}
   <main>
     {{ block "main" . }}{{ end }}
   </main>

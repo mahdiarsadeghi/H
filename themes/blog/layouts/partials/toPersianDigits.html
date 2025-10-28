@@ -1,0 +1,18 @@
+{{- /*
+  Convert western digits 0-9 to Persian (Eastern Arabic) numerals.
+  Usage: {{ partial "toPersianDigits.html" "123" }}
+  When given HTML, it will replace digits inside the HTML string as well.
+*/ -}}
+{{- $s := . | safeHTML | plainify -}}
+{{- $s = replace $s "0" "۰" -}}
+{{- $s = replace $s "1" "۱" -}}
+{{- $s = replace $s "2" "۲" -}}
+{{- $s = replace $s "3" "۳" -}}
+{{- $s = replace $s "4" "۴" -}}
+{{- $s = replace $s "5" "۵" -}}
+{{- $s = replace $s "6" "۶" -}}
+{{- $s = replace $s "7" "۷" -}}
+{{- $s = replace $s "8" "۸" -}}
+{{- $s = replace $s "9" "۹" -}}
+{{- /* return as safeHTML so it can be embedded in templates */ -}}
+{{- $s | safeHTML -}}

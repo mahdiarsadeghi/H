@@ -1,22 +1,262 @@
 body {
-  color: #222;
-  font-family: sans-serif;
+  color: #1A2421;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   line-height: 1.5;
-  margin: 1rem;
+  /* center the page horizontally by using auto left/right margins */
+  margin: 1rem auto;
   max-width: 768px;
+  padding: 0 1rem; /* small horizontal padding for narrow viewports */
 }
 
-header {
-  border-bottom: 1px solid #222;
-  margin-bottom: 1rem;
+/* CSS variables for theming */
+:root {
+  --bg: #ffffff;
+  --text: #004316;
+  --muted: #2a673e;
+  --accent: #cc4700;
+  --border: #1A2421;
 }
 
-footer {
-  border-top: 1px solid #222;
-  margin-top: 1rem;
+[data-theme="dark"] {
+  --bg: #004316;
+  --text: #e6eef6;
+  --muted: #d49877;
+  --accent: #cc652e;
+  --border: #444a52;
 }
 
-a {
-  color: #00e;
-  text-decoration: none;
+html, body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* constrain the visible site header (inner header) to match content width and show a single divider */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  margin: 0 auto 1rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  max-width: 768px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* outer header element is just a wrapper; avoid adding an extra border */
+header { margin: 0; border: none; }
+
+/* Navigation: horizontal tabs, no bullets */
+.site-header nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.site-header nav ul li { margin: 0; }
+.site-header nav a { padding: 0.25rem 0.5rem; border-radius: 6px; text-decoration: none; color: var(--text); }
+.site-header nav a.active { font-weight: 600; color: var(--accent); }
+
+/* Positioning: LTR languages keep site-brand left, nav right (default). For RTL, swap orders so nav is left and brand is right. */
+.site-header { display: flex; align-items: center; justify-content: space-between; }
+.site-header .site-brand { text-align: left; }
+.site-header nav { margin-left: auto; }
+
+/* For RTL (Farsi) reverse the row so brand appears on the right and nav on the left */
+[dir="rtl"] .site-header {
+  /* Force right-to-left header layout for Farsi pages */
+  direction: rtl !important;
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+[dir="rtl"] .site-header .site-brand {
+  order: 2 !important;
+  text-align: right !important;
+  flex: 0 0 auto !important;
+  margin-left: 0 !important;
+  margin-right: 0.5rem !important;
+}
+[dir="rtl"] .site-header nav {
+  order: 1 !important;
+  margin-right: 0 !important;
+  margin-left: auto !important;
+  flex: 0 0 auto !important;
+}
+[dir="rtl"] .site-header nav ul {
+  display: flex !important;
+  gap: 0.75rem !important;
+  align-items: center !important;
+  justify-content: flex-start !important; /* keep items left-aligned inside left-side nav */
+  direction: ltr !important;
+}
+
+/* Ensure the nav block itself sits flush to the left edge of the content area on RTL pages */
+[dir="rtl"] .site-header nav {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+}
+
+[dir="rtl"] .site-header nav ul { margin-left: 0 !important; padding-left: 0 !important; }
+
+.site-brand h1 { font-size: 1.25rem; margin: 0; }
+.site-brand a { color: var(--text); text-decoration: none; }
+
+.site-tagline { font-size: 0.95rem; color: var(--muted); margin-top: 0.25rem; margin-bottom: 0; }
+.site-brand .site-tagline { display: block; }
+.site-page-title { font-size: 1.25rem; }
+
+/* Hide any leftover posts-bottom-note inserted by older content/templates */
+.posts-bottom-note { display: none !important; }
+
+.header-controls { display: flex; align-items: center; gap: 0.5rem; }
+.btn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.25rem 0.5rem; border-radius: 6px; cursor: pointer; }
+.btn.icon { font-size: 1rem; line-height: 1; }
+.lang-switch { display: flex; gap: 0.25rem; }
+.lang-link { color: var(--muted); text-decoration: none; font-size: 0.9rem; padding: 0.25rem 0.4rem; border-radius: 4px; }
+.lang-link:hover { color: var(--accent); background: rgba(26,36,33,0.02); }
+
+a { color: var(--accent); text-decoration: none; }
+
+/* Small responsive tweak */
+@media (max-width: 520px) {
+  header { flex-direction: column; align-items: flex-start; }
+  .header-controls { width: 100%; justify-content: space-between; }
+}
+
+/* Footer / floating controls (Coder-like) */
+.footer-controls {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 9999;
+}
+
+/* Circular split-toggle: a single circle split dark(left)/light(right) */
+.theme-toggle {
+  width: 52px;
+  height: 52px;
+  border: none;
+  padding: 0;
+  border-radius: 999px;
+  /* left half: dark (#1A2421), right half: white */
+  background: linear-gradient(90deg, #1A2421 50%, #ffffff 50%);
+  box-shadow: 0 8px 20px rgba(8,12,20,0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.theme-toggle:focus { outline: 3px solid rgba(100,150,255,0.16); }
+
+/* hide inner track/knob (we display a single split circle instead) */
+.switch-track { display: none; }
+.switch-knob { display: none; }
+
+/* When dark theme is active, keep the split circle but this rule kept for compatibility */
+[data-theme="dark"] .theme-toggle { background: linear-gradient(90deg, #1A2421 50%, #ffffff 50%); }
+
+.lang-list { display: flex; flex-direction: column; gap: 0.25rem; align-items: center; }
+.lang-list .lang-link { display: inline-block; background: var(--bg); color: var(--muted); padding: 0.25rem 0.5rem; border-radius: 8px; border: 1px solid transparent; font-size: 0.85rem; text-decoration: none; }
+.lang-list .lang-link:hover { color: var(--accent); border-color: rgba(26,36,33,0.06); }
+
+/* language select dropdown styling */
+.lang-select select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+.lang-select { display: inline-block; }
+
+/* active language indicator */
+.lang-link.active, .lang-select select:focus, .lang-select select:active { color: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+/* Visually hidden helper for accessibility */
+.visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+
+/* RTL polish: use Persian-friendly fonts and alignments */
+[dir="rtl"] body {
+  direction: rtl;
+  text-align: right;
+  font-family: "Vazirmatn", "Noto Sans Arabic", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+[dir="rtl"] .footer-controls { right: auto; left: 1rem; }
+[dir="rtl"] .site-header { direction: rtl; }
+
+/* Ensure page content (main) and headings align correctly in RTL pages */
+[dir="rtl"] main { direction: rtl; text-align: right; }
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] p { text-align: right; }
+[dir="rtl"] .site-tagline { text-align: right; }
+
+/* Taxonomy / terms list: on RTL pages keep the tag block left-aligned inside the content area */
+.terms { margin-top: 0.5rem; }
+.terms-list { list-style: none; padding: 0; margin: 0; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.term-item { margin: 0; }
+.terms-list a { background: var(--bg); color: var(--muted); padding: 0.25rem 0.5rem; border-radius: 6px; text-decoration: none; border: 1px solid transparent; }
+.terms-list a:hover { border-color: rgba(26,36,33,0.06); color: var(--accent); }
+
+[dir="rtl"] .terms { direction: ltr; text-align: left; }
+[dir="rtl"] .terms-list { direction: ltr; justify-content: flex-start; }
+
+
+@media (max-width: 520px) {
+  .footer-controls { right: 0.5rem; bottom: 0.5rem; }
+  .theme-toggle { width: 44px; height: 44px; }
+}
+
+footer { border-top: 1px solid var(--border); margin-top: 1rem; }
+
+/* Post list: two-column layout (title | date) for lists/homepages */
+.post-list { margin-top: 1rem; border-top: 1px solid rgba(26,36,33,0.04); }
+.post-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(26,36,33,0.04);
+}
+.post-row { width: 100%; }
+.post-title { flex: 1 1 auto; text-align: left; }
+.post-title a { color: var(--text); text-decoration: none; font-weight: 500; }
+.post-title a:hover { color: var(--accent); text-decoration: underline; }
+.post-date {
+  flex: 0 0 auto;
+  color: var(--muted);
+  white-space: nowrap;
+  font-size: 0.95rem;
+  min-width: 6.5rem;
+  text-align: right;
+}
+
+/* Responsive: stack on narrow screens */
+@media (max-width: 640px) {
+  .post-row { flex-direction: column; align-items: flex-start; }
+  .post-date { margin-top: 0.35rem; text-align: left; }
+}
+
+/* RTL handling: show title on the right and date on the left */
+[dir="rtl"] .post-row { flex-direction: row-reverse; }
+[dir="rtl"] .post-title { text-align: right; }
+[dir="rtl"] .post-date { text-align: left; margin-left: 1rem; margin-right: 0; }
+/* Explicit ordering for RTL: ensure title visually sits on the right and date on the left */
+[dir="rtl"] .post-title { order: 2 !important; }
+[dir="rtl"] .post-date { order: 1 !important; }
+@media (max-width: 640px) {
+  [dir="rtl"] .post-row { flex-direction: column; align-items: flex-end; }
+  [dir="rtl"] .post-date { text-align: right; margin-top: 0.35rem; }
 }

@@ -1,0 +1,28 @@
+{{- /* Reusable language switcher partial. Expects context to be a Page (or list) */ -}}
+<div class="page-lang-switch">
+  {{- $page := . -}}
+  {{- range .Site.Languages }}
+    {{- $lang := .Lang -}}
+    {{- $label := .LanguageName | default $lang -}}
+    {{- if eq $lang $.Site.Language.Lang }}
+      <span class="lang-current">{{ $label }}</span>
+    {{- else }}
+      {{- /* default target: language home (try to resolve via site.GetPage) */ -}}
+      {{- $homePath := (printf "/%s/" $lang) -}}
+      {{- $homePage := site.GetPage $homePath -}}
+      {{- $target := $homePath | relURL -}}
+      {{- if $homePage }}
+        {{- $target = $homePage.RelPermalink -}}
+      {{- end }}
+      {{- /* if a translation exists for the current page, prefer linking to that translation */ -}}
+      {{- with $page }}
+        {{- $matches := where .Translations "Lang" $lang -}}
+        {{- if gt (len $matches) 0 }}
+          {{- $trans := index $matches 0 -}}
+          {{- $target = $trans.RelPermalink -}}
+        {{- end }}
+      {{- end }}
+      <a class="lang-link" href="{{ $target }}">{{ $label }}</a>
+    {{- end }}
+  {{- end }}
+</div>
